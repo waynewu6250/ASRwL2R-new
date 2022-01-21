@@ -1,0 +1,15 @@
+lightgbm
+numpy
+pandas
+jiwer
+scikit-learn==0.24.2
+shap
+transformers==4.6.1
+torch
+torchvision
+sentence-transformers==1.2.0
+kaldi_io
+tensorflow
+torchtext
+datasets
+matplotlib
