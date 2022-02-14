@@ -37,7 +37,7 @@ class Pretrainer:
         """Main pretraining pipeline"""
 
         # data
-        self.test_path = './data/libri_subset/'
+        self.test_path = './data/espnet_parsed/'
         self.prefix = test_path.split('/')[3].split('.')[0]
         if train_path:
             self.train_dataset = UnStructuredDataset(train_path, opt=opt, preload=preload)
@@ -483,7 +483,7 @@ class Pretrainer:
                 for ii in range(b):
                     for j in range(lengths[ii]):
                         loss = nn.CrossEntropyLoss()(logits[ii][j].reshape(t, -1), targets[ii][j].long())
-                        scores[self.test_dataset.data.data_id[counter]].append(loss.item())
+                        scores[self.test_dataset.data.utt_id[counter]].append(loss.item())
                         counter += 1
 
             elif rescorer_type == 'bert':
@@ -493,7 +493,7 @@ class Pretrainer:
                         scores_pred = logits[ii][:lengths[ii]].unsqueeze(0)
                         scores_prob = nn.Softmax(dim=1)(scores_pred).squeeze(0)
                         for j in range(lengths[ii]):
-                            scores[self.test_dataset.data.data_id[counter]].append(scores_prob[j].item())
+                            scores[self.test_dataset.data.utt_id[counter]].append(scores_prob[j].item())
                             counter += 1
                     else:
                         for j in range(lengths[ii]):
@@ -501,7 +501,7 @@ class Pretrainer:
                                 score = logits[ii][j].item()
                             else:
                                 score = nn.Sigmoid()(logits[ii][j]).item()
-                            scores[self.test_dataset.data.data_id[counter]].append(score)
+                            scores[self.test_dataset.data.utt_id[counter]].append(score)
                             counter += 1
 
         print('Total utterances: ', len(scores))

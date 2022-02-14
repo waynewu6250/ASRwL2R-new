@@ -50,7 +50,7 @@ class CoreDataset(Dataset):
 
         elif self.utterance_mode == 'group':
             # Group-aware information:
-            query_groups = get_groups(self.data.data_id)
+            query_groups = get_groups(self.data.utt_id)
             self.utterances = []
             self.truths = []
             self.audio_embeddings = []

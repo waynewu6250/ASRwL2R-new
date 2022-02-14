@@ -27,10 +27,10 @@ class BertRescorer(nn.Module):
 
         self.audio_encoder = nn.Linear(768, self.bert_dim)
         self.fc_truth = nn.Linear(self.bert_dim, 1)
-        self.fc = nn.Linear(self.bert_dim+2, 1)
+        self.fc = nn.Linear(self.bert_dim+opt.feature_num_train, 1)
 
         # listwise setting
-        self.rnn = nn.LSTM(input_size=self.bert_dim+2,
+        self.rnn = nn.LSTM(input_size=self.bert_dim+opt.feature_num_train,
                            hidden_size=self.bert_dim,
                            batch_first=True,
                            bidirectional=True,

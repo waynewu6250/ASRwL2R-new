@@ -71,7 +71,7 @@ def predict(args):
         dataset_to_test = test_dataset
 
     ################ Predicting ##################
-    predictor = Predictor(args, dataset_to_test, features=opt.FEATURE_public)
+    predictor = Predictor(args, opt, dataset_to_test, features=opt.FEATURE_public)
     print('Number of utterances in data to test: ', dataset_to_test.num_utterances)
     print('Number of total data to test: ', len(dataset_to_test.data))
     predictor.predict(args.file)

@@ -21,17 +21,19 @@ from model.bert_ltr_rescorer import BertLTRRescorer
 
 class Predictor:
 
-    def __init__(self, args, test_dataset, features):
+    def __init__(self, args, opt, test_dataset, features):
         """Class: Train a model with specified configurations."""
 
         self.args = args
+        self.opt = opt
         self.test_dataset = test_dataset
-        self.utt_ids = test_dataset.data.data_id
+        self.utt_ids = test_dataset.data.utt_id
         self.dtest = test_dataset.data_for_use
         self.dtest_y = test_dataset.label
         self.dgroup_test = test_dataset.group
 
         self.baseline_data = self.dtest #self.dtest[features]
+        self.feature_num = opt.feature_num_test
         self.test_data = test_dataset.data
 
         # Add reference and hypothesis to test_data
@@ -157,9 +159,9 @@ class Predictor:
 
         if file_type == 'train' or self.args.model == 'fixed_weight' or self.args.model == 'reg':
             # Original calculation
-            # listwise_bce = self.test_data.bce_mwer_score.to_numpy().astype(np.float32)
+            listwise_bce = self.test_data.bce_score.to_numpy().astype(np.float32)
             calculate_best_wer(self.utt_ids,
-                               rank_score,
+                               listwise_bce,
                                self.test_data.truth.to_numpy(),
                                self.test_data.hyp.to_numpy(),
                                self.test_data,
@@ -188,7 +190,7 @@ class Predictor:
 
         else:
             optim_func = self.optim_func_generator(pred_y)
-            bound=np.asarray([[0.0, 10.0], [0.0, 10.0], [0.0, 10.0], [0.0, 10.0], [0.0, 20.0]])
+            bound=np.asarray([[0.0, 10.0], [0.0, 10.0], [0.0, 10.0], [0.0, 10.0], [0.0, 10.0], [0.0, 10.0], [0.0, 20.0]])
             optim_result = scipy.optimize.dual_annealing(optim_func,
                                                          bound,
                                                          local_search_options={},
@@ -197,7 +199,7 @@ class Predictor:
                                                          callback=lambda x, f, context: print(x, f, context),
                                                          maxiter=1000, visit=2.95, accept=-5)
             weights = optim_result.x
-            rank_score = self.baseline_data.dot(weights[:4]).to_numpy() + weights[4] * pred_y
+            rank_score = self.baseline_data.dot(weights[:self.feature_num]).to_numpy() + weights[self.feature_num] * pred_y
             calculate_best_wer(self.utt_ids,
                                rank_score,
                                self.test_data.truth.to_numpy(),
@@ -217,7 +219,7 @@ class Predictor:
 
     def optim_func_generator(self, pred_y):
         def tmp_func(weights):
-            rank_score = self.baseline_data.dot(weights[:4]).to_numpy() + weights[4]*pred_y
+            rank_score = self.baseline_data.dot(weights[:self.feature_num]).to_numpy() + weights[self.feature_num]*pred_y
             return calculate_min_wer(self.utt_ids, rank_score, self.test_data)
         return tmp_func
 
