@@ -10,7 +10,7 @@ class Config:
         # FEATURE_to_train = ["score", "hyp_length"] # features to train bert listwise confidence model
         FEATURE_to_train = ["hyp_length", "decoder", "ctc", "lm", "score"] # "score"
         # FEATURE_public = ["score", "hyp_length", "bce_score", "bce_mwer_score"] # features to train & evaluate lambdamart model
-        FEATURE_public = ["hyp_length", "score", "decoder", "ctc", "lm", "bce_score", "bce_mwer_score"] # "score"
+        FEATURE_public = ["hyp_length", "decoder", "ctc", "lm", "bce_score", "bce_mwer_score"] # "score"
         feature_num_train = len(FEATURE_to_train)
         feature_num_test = len(FEATURE_public)
 
