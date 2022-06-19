@@ -15,9 +15,7 @@ from tqdm import tqdm
 import time
 import scipy
 
-from bert_data_ltr import CoreDataset, get_dataloader
 from model.bert_model import BertEmbedding
-from model.bert_ltr_rescorer import BertLTRRescorer
 
 class Predictor:
 
@@ -119,39 +117,6 @@ class Predictor:
             # weight = pd.DataFrame(pd.Series([0.4, 0.25, 0.25, 0.75], index=self.baseline_data.columns, name=0))
             # self.test_data['score'] = -self.baseline_data.dot(weight)
             # rank_score_weight = self.test_data.score.to_numpy()
-
-        elif self.args.model == 'bert_ltr':
-
-            test_dataloader = get_dataloader(self.test_dataset, utterance_mode='group',
-                                            pretrain_embed=self.pretrain_embed)
-
-            model = BertLTRRescorer(self.device, self.pretrain_embed, self.checkpoint_path,
-                                    test_dataloader.dataset.tokenizer.vocab_size, opt,
-                                    pretrain_model=self.model)
-            model_path = './bert_ltr_rescorer_{}_listwise.pth'.format(self.pretrain_embed)
-            model = model.to(self.device)
-
-            model.load_state_dict(torch.load(model_path))
-            print('Pretrained bert ltr model has been loaded...')
-
-            pred_y = []
-            model.eval()
-            for i, batch in enumerate(tqdm(test_dataloader,
-                                           total=len(test_dataloader),
-                                           desc='Batches',
-                                           unit=' batches',
-                                           ncols=80)):
-                with torch.no_grad():
-                    preds = model(batch)
-                    _, _, batch_preds_clean = model.learning_to_rank_loss(preds, batch)
-
-                pred_y += batch_preds_clean
-
-            rank_score = pred_y
-
-            weight = pd.DataFrame(pd.Series([0.4, 0.25, 0.25, 0.75], index=self.baseline_data.columns, name=0))
-            self.test_data['score'] = -self.baseline_data.dot(weight)
-            rank_score_weight = self.test_data.score.to_numpy()
 
         else:
             raise ValueError('Input valid model input!!')

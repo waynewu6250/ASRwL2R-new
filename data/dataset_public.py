@@ -13,7 +13,7 @@ import glob
 
 class L2RDataset:
 
-    def __init__(self, path, prefix, features, opt, preload=False, nbest_all=True, nbest_extend=False, feature_num=8):
+    def __init__(self, path, prefix, features, opt, preload=False, feature_num=8):
         """A class object to store data
         :param paths: a dictionary of file paths
                keys: 'csv_path': final processed csv file
@@ -27,8 +27,6 @@ class L2RDataset:
         """
 
         self.opt = opt
-        self.nbest_all = nbest_all
-        self.nbest_extend = nbest_extend
         self.feature_num = feature_num
         self.audio_dic = {}
 

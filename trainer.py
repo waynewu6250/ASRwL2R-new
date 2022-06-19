@@ -7,9 +7,7 @@ import os
 from tqdm import tqdm
 import numpy as np
 
-from bert_data_ltr import CoreDataset, get_dataloader
 from model.bert_model import BertEmbedding
-from model.bert_ltr_rescorer import BertLTRRescorer
 from model.lambdamart import LGBMOpt
 from model.ptranking.ltr_adhoc.eval.eval_utils import calculate_best_wer
 from config import opt

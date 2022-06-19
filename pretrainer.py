@@ -3,9 +3,9 @@ import torch
 import torch.nn as nn
 from torch.autograd import Variable
 from torch.optim import Adam, RMSprop
-# from transformers import BertTokenizer, AutoModel, BertConfig, AdamW, BertForPreTraining, DataCollatorForLanguageModeling, Trainer, TrainingArguments
-# import tensorflow as tf
-# from sentence_transformers import SentenceTransformer
+from transformers import BertTokenizer, AutoModel, BertConfig, AdamW, BertForPreTraining, DataCollatorForLanguageModeling, Trainer, TrainingArguments
+import tensorflow as tf
+from sentence_transformers import SentenceTransformer
 from datasets import Dataset
 
 import pickle

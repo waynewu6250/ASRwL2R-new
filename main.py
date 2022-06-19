@@ -14,7 +14,7 @@ def load_dataset(path, args):
     switcher = {'feature_to_train': opt.FEATURE_to_train,
                 'feature_public': opt.FEATURE_public}
     FEATURE = switcher[args.feature_to_use]
-    dataset = L2RDataset(path, None, features=FEATURE, opt=opt, preload=args.preload, nbest_all=args.nbest_all, nbest_extend=args.nbest_extend)
+    dataset = L2RDataset(path, None, features=FEATURE, opt=opt, preload=args.preload)
     return dataset, FEATURE
 
 def load_data(args):
