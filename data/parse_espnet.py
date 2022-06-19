@@ -134,13 +134,11 @@ if args.type == 'phase_2':
         train_bce_dic = pickle.load(f)
     with open('espnet_parsed/train-all_bert_bert_rescorer_bce_mwer_listwise.pkl', 'rb') as f:
         train_bce_mwer_dic = pickle.load(f)
-    # with open('espnet_parsed/train-all_bert_bert_rescorer_ce_listwise.pkl', 'rb') as f:
-    #     train_ce_dic = pickle.load(f)
     
 collections = defaultdict(list)
 group_id = 0
 for folder in os.listdir(root):
-    if folder != 'test_clean':
+    if folder in ['dev_clean', 'dev_other']:
         print('parse: ', folder)
         score_family = parse_raw_data(os.path.join(root, folder))
         collections, group_id = parse_data(score_family, collections, group_id, train_bce_dic, train_bce_mwer_dic, train_ce_dic)
@@ -149,7 +147,7 @@ data['hyp_length'] = data['hyp'].map(lambda x: len(x.split(' ')))
 data['#refWord'] = data['truth'].map(lambda x: len(x.split(' ')))
 print('Total utterances: ', data.loc[len(data)-1]['group_id']+1)
 print('Total hypotheses: ', len(data))
-print(data.loc[:100])
+# print(data.loc[:100])
 data.to_csv('espnet_parsed/train-all.csv')
 
 # #####################
@@ -160,19 +158,18 @@ if args.type == 'phase_2':
         test_bce_dic = pickle.load(f)
     with open('espnet_parsed/test-clean_bert_bert_rescorer_bce_mwer_listwise.pkl', 'rb') as f:
         test_bce_mwer_dic = pickle.load(f)
-    # with open('espnet_parsed/test-clean_bert_bert_rescorer_ce_listwise.pkl', 'rb') as f:
-    #     test_ce_dic = pickle.load(f)
 
-collections = defaultdict(list)
-group_id = 0
-folder = 'test_clean'
-print('parse: ', folder)
-score_family = parse_raw_data(os.path.join(root, folder))
-collections, group_id = parse_data(score_family, collections, group_id, test_bce_dic, test_bce_mwer_dic, test_ce_dic)
-data = pd.DataFrame(collections)
-data['hyp_length'] = data['hyp'].map(lambda x: len(x.split(' ')))
-data['#refWord'] = data['truth'].map(lambda x: len(x.split(' ')))
-print('Total utterances: ', data.loc[len(data)-1]['group_id']+1)
-print('Total hypotheses: ', len(data))
-# print(data.iloc[:300][['hyp','score','bert_score','bce_score','bce_mwer_score']])
-data.to_csv('espnet_parsed/test-clean.csv')
+folders = ['test_clean', 'test_other']
+for folder in folders:
+    group_id = 0
+    collections = defaultdict(list)
+    print('parse: ', folder)
+    score_family = parse_raw_data(os.path.join(root, folder))
+    collections, group_id = parse_data(score_family, collections, group_id, test_bce_dic, test_bce_mwer_dic, test_ce_dic)
+    data = pd.DataFrame(collections)
+    data['hyp_length'] = data['hyp'].map(lambda x: len(x.split(' ')))
+    data['#refWord'] = data['truth'].map(lambda x: len(x.split(' ')))
+    print('Total utterances: ', data.loc[len(data)-1]['group_id']+1)
+    print('Total hypotheses: ', len(data))
+    # print(data.iloc[:300][['hyp','score','bert_score','bce_score','bce_mwer_score']])
+    data.to_csv('espnet_parsed/{}.csv'.format(folder))

@@ -6,6 +6,7 @@ from trainer import Trainer
 from predictor import Predictor
 from utils import *
 from config import opt
+import os
 
 def load_dataset(path, args):
     """Load dataset object"""
@@ -126,6 +127,9 @@ if __name__ == '__main__':
     assert args.vis in ['plot_tree', 'plot_feature_importance', 'plot_print_feature_shap', 'wer_plot']
     assert args.file in ['train', 'dev', 'test']
     assert 'feature' in args.feature_to_use
+
+    if not os.path.exists('./checkpoints/'):
+        os.mkdir('./checkpoints/')
 
     if args.type == 'train':
         train(args)

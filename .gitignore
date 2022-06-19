@@ -131,3 +131,10 @@ dmypy.json
 .DS_Store
 data/libri_subset
 checkpoints
+data/parse_public.py
+data/dev-clean.am.json
+data/dev-other.am.json
+data/test-clean.am.json
+data/test-other.am.json
+model/bert_ltr_rescorer.py
+bert_data_ltr.py

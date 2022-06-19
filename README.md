@@ -1,7 +1,7 @@
-# A LEARNING-TO-RANK APPROACH TO ASR RESCORING
-ICASSP 2022 paper
+# Learning to rank with BERT-based confidence models in ASR rescoring
+Interspeech 2022 paper
 
-Open source codes of the learning-to-rank based ASR rescoring on librispeech scores generated from ESPNet.
+Open source codes of the learning-to-rank based ASR rescoring on librispeech decoding scores generated from First-pass ESPNet.
 
 # 1. Quick set-up
 
@@ -13,17 +13,17 @@ pip3 install -r requirements.txt
 # 2. Folder structure
 
 ```
-ASRwL2R-public/
+ASRwL2R/
    └── data/
-       └── libri_subset/ (librispeech scores folder)
-       ├── parse_public.py (parse librispeech score from data/libri_subset)
+       └── espnet/ (librispeech scores folder)
+       └── espnet_parsed/ (parsed csv files)
+       ├── parse_espnet.py (parse librispeech score from espnet)
        ├── dataset_public.py  (dataset file)
        ├── unstructured_dataset.py (unstructured data like texts, audio for finetuning/NN model)
    └── model/
        ├── lambdamart.py (hyperparameter tuning)
        ├── bert_model.py (bert model)
        ├── bert_rescorer.py (ASR BERT confidence model (ASRCM))
-       ├── bert_ltr_rescorer.py (End-to-end BERT listwise LTR model)
        ├── transformer.py (second pass transformer LM rescorer)
        ├── transformer_fuser.py (transformer structure for ASRCM)
    trainer.py (main training pipeline)
@@ -33,7 +33,6 @@ ASRwL2R-public/
    main.py
    bert_pretrain.py (bert finetuning entry)
    bert_data.py (bert dataloader)
-   bert_data_ltr.py (bert dataloader for BERT LTR model)
    requirements.txt
 ```
 
@@ -73,7 +72,7 @@ Parse the librispeech score files in `data/`
 ### STEP 3: Train & predict LTR model
 1) Train LambdaMART LTR model
    
-   (featureID is defined in config.py. Ex. For FEATURE21 (BEST), you enter `bash run.sh lambdamart feature21`)
+   (featureID is defined in config.py)
    ```
    python main.py -t train -m lambdamart -feat feature_public
    ```
@@ -109,10 +108,6 @@ For `[checkpoint_path]`, bert uses `/home/ec2-user/pytorch_model/` and mulan use
       
 ### STEP 2: Generating scores
   
-  * Generate cosine similarity:
-     ```
-     python bert_pretrain.py -t score -e [glove/sbert/bert] -c [checkpoint_path]
-     ```
   
   * Generate text embeddings:
      ```

@@ -21,7 +21,7 @@ class Config:
         # test_path = './data/libri_subset/test-clean-test.csv'
         # librispeech espnet
         train_path = './data/espnet_parsed/train-all.csv'
-        test_path = './data/espnet_parsed/test-clean.csv'
+        test_path = './data/espnet_parsed/test_clean.csv'
 
         files_to_use = ['.scored_nbest_dataset',
                         '.snr_file.txt',

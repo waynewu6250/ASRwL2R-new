@@ -3,9 +3,9 @@ import torch
 import torch.nn as nn
 from torch.autograd import Variable
 from torch.optim import Adam, RMSprop
-from transformers import BertTokenizer, AutoModel, BertConfig, AdamW, BertForPreTraining, DataCollatorForLanguageModeling, Trainer, TrainingArguments
-import tensorflow as tf
-from sentence_transformers import SentenceTransformer
+# from transformers import BertTokenizer, AutoModel, BertConfig, AdamW, BertForPreTraining, DataCollatorForLanguageModeling, Trainer, TrainingArguments
+# import tensorflow as tf
+# from sentence_transformers import SentenceTransformer
 from datasets import Dataset
 
 import pickle
@@ -17,7 +17,7 @@ import re
 import csv
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
-from transformers import BertTokenizer
+# from transformers import BertTokenizer
 import math
 from collections import defaultdict
 
