@@ -100,30 +100,20 @@ if __name__ == '__main__':
     parser.add_argument('-m', '--model', default='lambdamart', dest='model', help='fixed_weight | reg | lambdamart | lambdamart_tune')
     parser.add_argument('-v', '--vis', default='plot_tree', dest='vis', help='plot_tree | plot_feature_importance | plot_print_feature_shap | wer_plot')
     parser.add_argument('-f', '--file', default='test', dest='file', help='train | dev | test')
-    parser.add_argument('-feat', '--feature', default='feature10', dest='feature_to_use', help='enter the feature number')
+    parser.add_argument('-feat', '--feature', default='feature_public', dest='feature_to_use', help='enter the feature number')
     parser.add_argument('-p', '--postfix', default='', dest='postfix', help='postfix for the trained model to test')
     parser.add_argument('-i', '--iterations', default=2000, dest='iterations', help='iterations of training')
-    parser.add_argument('-e', '--embed', default='bert', dest='embed', help='bert | mulan')
-    parser.add_argument('-c', '--checkpoint_path', default='/home/ec2-user/pytorch_model/', dest='checkpoint_path', help='path for pretrained model')
+    parser.add_argument('-e', '--embed', default='bert', dest='embed', help='bert')
+    parser.add_argument('-c', '--checkpoint_path', default='~/checkpoints/', dest='checkpoint_path', help='path for pretrained model (for local file only)')
     parser.add_argument('--preload', dest='preload', action='store_true')
     parser.add_argument('--no-preload', dest='preload', action='store_false')
     parser.set_defaults(preload=True)
-    parser.add_argument('--nbest-all', dest='nbest_all', action='store_true')
-    parser.add_argument('--no-nbest-all', dest='nbest_all', action='store_false')
-    parser.set_defaults(nbest_all=True)
-    parser.add_argument('--run-error', dest='run_error', action='store_true')
-    parser.add_argument('--no-run-error', dest='run_error', action='store_false')
-    parser.set_defaults(run_error=False)
-    parser.add_argument('--nbest-extend', dest='nbest_extend', action='store_true')
-    parser.add_argument('--no-nbest-extend', dest='nbest_extend', action='store_false')
-    parser.set_defaults(nbest_extend=False)
     parser.add_argument('--cuda', type=int, help='specify the gpu id if needed, such as 0 or 1.', default=None)
-    parser.add_argument('--ltr_model', type=str, help='specify the learning-to-rank method')
     parser.add_argument('--dir_json', type=str, help='the path of json files specifying the evaluation details.')
     args = parser.parse_args()
 
     assert args.type in ['train', 'predict', 'visualize']
-    assert args.model in ['fixed_weight', 'reg', 'lambdamart', 'lambdamart_tune', 'bert_ltr']
+    assert args.model in ['fixed_weight', 'reg', 'lambdamart', 'lambdamart_tune']
     assert args.vis in ['plot_tree', 'plot_feature_importance', 'plot_print_feature_shap', 'wer_plot']
     assert args.file in ['train', 'dev', 'test']
     assert 'feature' in args.feature_to_use

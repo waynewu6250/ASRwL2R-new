@@ -87,7 +87,7 @@ We can generate different sets of features by training upstream models and gener
 
 ### STEP 1: Training
 
-For `[checkpoint_path]`, bert uses `/home/ec2-user/pytorch_model/` and mulan uses `/home/ec2-user/pretrained/`
+For `[checkpoint_path]`, load pretrained model if saved locally, the default is 'bert-base-uncased'
   
   * Fine-tune Bert model:
      ```

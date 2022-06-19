@@ -10,15 +10,12 @@ class Config:
         # FEATURE_to_train = ["score", "hyp_length"] # features to train bert listwise confidence model
         FEATURE_to_train = ["hyp_length", "decoder", "ctc", "lm", "score"] # "score"
         # FEATURE_public = ["score", "hyp_length", "bce_score", "bce_mwer_score"] # features to train & evaluate lambdamart model
-        FEATURE_public = ["hyp_length", "decoder", "ctc", "lm", "bce_score", "bce_mwer_score"] # "score"
+        FEATURE_public = ["hyp_length", "decoder", "ctc", "lm"]#, "bce_score", "bce_mwer_score"] # "score"
         feature_num_train = len(FEATURE_to_train)
         feature_num_test = len(FEATURE_public)
 
         ####################################
         # File paths
-        # librispeech subset
-        # train_path = './data/libri_subset/train-all-test.csv'
-        # test_path = './data/libri_subset/test-clean-test.csv'
         # librispeech espnet
         train_path = './data/espnet_parsed/train-all.csv'
         test_path = './data/espnet_parsed/test_clean.csv'
@@ -58,10 +55,6 @@ class Config:
         # ce: 5e-5
         # mwer: 5e-5
 
-        # mulan
-        # ce: 5e-6
-        # mwer: 5e-6
-
         ########### bert rescorer ###########
         # use batch_size 128
         # bert
@@ -72,19 +65,6 @@ class Config:
         # bce loss2: 1e-6
         # ce loss: 1e-6
         # margin loss: 5e-6
-
-        # mulan
-        # bert_dim: 1024
-        # rescorer: 5e-6
-        # mse loss: 1e-6
-        # bce loss: 1e-6
-        # bce loss2: 1e-6
-        # ce loss: 1e-6
-        # margin loss: 5e-6
-
-        ########### bert ltr ###########
-        # feature only: epoch 300, batch_size 128, lr 5e-5
-        # listwise: epoch 300, batch_size 128, lr 5e-7
 
 opt = Config()
 
