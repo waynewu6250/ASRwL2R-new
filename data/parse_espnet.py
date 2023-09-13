@@ -72,7 +72,7 @@ def parse_raw_data(folder):
     
     return score_family
 
-def parse_data(score_family, collections, group_id, bce_dic=None, bce_mwer_dic=None, ce_dic=None):
+def parse_data(score_family, collections, group_id, bce_dic=None, bce_mwer_dic=None, ce_dic=None, bce_point_dic=None, bce_mwer_point_dic=None):
 
     for utt_id in score_family['hyp'].keys():
         wers = []
@@ -97,6 +97,8 @@ def parse_data(score_family, collections, group_id, bce_dic=None, bce_mwer_dic=N
             if bce_dic:
                 collections['bce_score'].append(bce_dic[utt_id][counter])
                 collections['bce_mwer_score'].append(bce_mwer_dic[utt_id][counter])
+                # collections['bce_point_score'].append(bce_point_dic[utt_id][counter])
+                # collections['bce_mwer_point_score'].append(bce_mwer_point_dic[utt_id][counter])
                 # collections['ce_score'].append(ce_dic[utt_id][counter])
             counter += 1
         
@@ -112,13 +114,14 @@ def parse_data(score_family, collections, group_id, bce_dic=None, bce_mwer_dic=N
 
 #########################################################################################################
 
-if not os.path.exists('espnet_parsed/'):
-    os.mkdir('espnet_parsed/')
+if not os.path.exists('espnet_rerun_1003/'):
+    os.mkdir('espnet_rerun_1003/')
 
 root = './espnet/simpleoier_librispeech_asr_train_asr_conformer7_hubert_ll60k_large_raw_en_bpe5000_sp/decode_asr_lm_lm_train_lm_transformer2_en_bpe5000_valid.loss.ave_asr_model_valid.acc.ave/'
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-t', '--type', default='phase_2', dest='type', help='phase_1 | phase_2')
+parser.add_argument('-w', '--wise', default='listwise', dest='wise', help='listwise | pointwise')
 args = parser.parse_args()
 
 #####################
@@ -130,17 +133,20 @@ train_ce_dic, test_ce_dic = None, None
 
 if args.type == 'phase_2':
     print('Load bert confidence model scores...')
-    with open('espnet_parsed/train-all_bert_bert_rescorer_bce_listwise.pkl', 'rb') as f:
+    with open('espnet_rerun_1003/train-clean-100_bert_bert_rescorer_bce_{}_1003.pkl'.format(args.wise), 'rb') as f:
         train_bce_dic = pickle.load(f)
-    with open('espnet_parsed/train-all_bert_bert_rescorer_bce_mwer_listwise.pkl', 'rb') as f:
+    with open('espnet_rerun_1003/train-clean-100_bert_bert_rescorer_bce_mwer_{}_1003.pkl'.format(args.wise), 'rb') as f:
         train_bce_mwer_dic = pickle.load(f)
-    # with open('espnet_parsed/train-all_bert_bert_rescorer_ce_listwise.pkl', 'rb') as f:
-    #     train_ce_dic = pickle.load(f)
+    # with open('espnet_rerun_1003/train-all_bert_bert_rescorer_bce_pointwise.pkl', 'rb') as f:
+    #     train_bce_point_dic = pickle.load(f)
+    # with open('espnet_rerun_1003/train-all_bert_bert_rescorer_bce_mwer_pointwise.pkl', 'rb') as f:
+    #     train_bce_mwer_point_dic = pickle.load(f)
     
 collections = defaultdict(list)
 group_id = 0
 for folder in os.listdir(root):
-    if folder != 'test_clean':
+    # if folder != 'test_other' and folder != 'test_clean':
+    if folder == 'train_clean_100':
         print('parse: ', folder)
         score_family = parse_raw_data(os.path.join(root, folder))
         collections, group_id = parse_data(score_family, collections, group_id, train_bce_dic, train_bce_mwer_dic, train_ce_dic)
@@ -150,29 +156,32 @@ data['#refWord'] = data['truth'].map(lambda x: len(x.split(' ')))
 print('Total utterances: ', data.loc[len(data)-1]['group_id']+1)
 print('Total hypotheses: ', len(data))
 print(data.loc[:100])
-data.to_csv('espnet_parsed/train-all.csv')
+data.to_csv('espnet_rerun_1003/train-clean-100.csv')
 
 # #####################
 # Parse the testing data
 
-if args.type == 'phase_2':
-    with open('espnet_parsed/test-clean_bert_bert_rescorer_bce_listwise.pkl', 'rb') as f:
-        test_bce_dic = pickle.load(f)
-    with open('espnet_parsed/test-clean_bert_bert_rescorer_bce_mwer_listwise.pkl', 'rb') as f:
-        test_bce_mwer_dic = pickle.load(f)
-    # with open('espnet_parsed/test-clean_bert_bert_rescorer_ce_listwise.pkl', 'rb') as f:
-    #     test_ce_dic = pickle.load(f)
+for folder in ['test-other', 'test-clean']:
 
-collections = defaultdict(list)
-group_id = 0
-folder = 'test_clean'
-print('parse: ', folder)
-score_family = parse_raw_data(os.path.join(root, folder))
-collections, group_id = parse_data(score_family, collections, group_id, test_bce_dic, test_bce_mwer_dic, test_ce_dic)
-data = pd.DataFrame(collections)
-data['hyp_length'] = data['hyp'].map(lambda x: len(x.split(' ')))
-data['#refWord'] = data['truth'].map(lambda x: len(x.split(' ')))
-print('Total utterances: ', data.loc[len(data)-1]['group_id']+1)
-print('Total hypotheses: ', len(data))
-# print(data.iloc[:300][['hyp','score','bert_score','bce_score','bce_mwer_score']])
-data.to_csv('espnet_parsed/test-clean.csv')
+    if args.type == 'phase_2':
+        with open('espnet_rerun_1003/{}_bert_bert_rescorer_bce_{}_1003.pkl'.format(folder, args.wise), 'rb') as f:
+            test_bce_dic = pickle.load(f)
+        with open('espnet_rerun_1003/{}_bert_bert_rescorer_bce_mwer_{}_1003.pkl'.format(folder, args.wise), 'rb') as f:
+            test_bce_mwer_dic = pickle.load(f)
+        # with open('espnet_rerun_1003/test-clean_bert_bert_rescorer_bce_pointwise.pkl', 'rb') as f:
+        #     test_bce_point_dic = pickle.load(f)
+        # with open('espnet_rerun_1003/test-clean_bert_bert_rescorer_bce_mwer_pointwise.pkl', 'rb') as f:
+        #     test_bce_mwer_point_dic = pickle.load(f)
+
+    collections = defaultdict(list)
+    group_id = 0
+    print('parse: ', folder)
+    score_family = parse_raw_data(os.path.join(root, folder.replace('-', '_')))
+    collections, group_id = parse_data(score_family, collections, group_id, test_bce_dic, test_bce_mwer_dic, test_ce_dic)
+    data = pd.DataFrame(collections)
+    data['hyp_length'] = data['hyp'].map(lambda x: len(x.split(' ')))
+    data['#refWord'] = data['truth'].map(lambda x: len(x.split(' ')))
+    print('Total utterances: ', data.loc[len(data)-1]['group_id']+1)
+    print('Total hypotheses: ', len(data))
+    print(data.iloc[:300][['hyp','score','bce_score','bce_mwer_score']])
+    data.to_csv('espnet_rerun_1003/{}.csv'.format(folder))

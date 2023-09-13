@@ -37,7 +37,7 @@ class Pretrainer:
         """Main pretraining pipeline"""
 
         # data
-        self.test_path = './data/espnet_parsed/'
+        self.test_path = './data/espnet_rerun_1003/'
         self.prefix = test_path.split('/')[3].split('.')[0]
         if train_path:
             self.train_dataset = UnStructuredDataset(train_path, opt=opt, preload=preload)
@@ -47,12 +47,13 @@ class Pretrainer:
         self.pretrain_type = args.type
         self.pretrain_embed = args.embed
         self.checkpoint_path = args.checkpoint_path
+        self.wise = 'listwise'
 
         # tokenizer
         self.maxlen = 50
         self.REPLACE_BY_SPACE_RE = re.compile(r'[/(){}\[\]\|@,;]')
         self.BAD_SYMBOLS_RE = re.compile(r'[^0-9a-z #+_]')
-        self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased', do_lower_case=True)
+        self.tokenizer = BertTokenizer.from_pretrained('./checkpoints/mlm-pretrained', do_lower_case=True)
 
         # gpu
         self.device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
@@ -334,7 +335,7 @@ class Pretrainer:
             model_path = '/home/ec2-user/transformer_rescorer_{}.pth'.format(self.pretrain_embed)
         elif rescorer_type == 'bert':
             model = BertRescorer(self.device, self.pretrain_embed, self.checkpoint_path, self.tokenizer.vocab_size, opt, pretrain_model=self.model, loss_type=loss_type)
-            model_path = './checkpoints/bert_rescorer_{}_{}_listwise.pth'.format(self.pretrain_embed, loss_type)
+            model_path = './checkpoints/bert_rescorer_{}_{}_{}.pth'.format(self.pretrain_embed, loss_type, self.wise)
         model = model.to(self.device)
 
         # if os.path.exists(model_path):
@@ -431,14 +432,14 @@ class Pretrainer:
                 #     print('saving with loss of {}'.format(average_val_loss),
                 #           'improved over previous {}'.format(best_loss))
                 #     best_loss = average_val_loss
-                #     torch.save(model.state_dict(),'/home/ec2-user/bert_rescorer_{}_{}_listwise_rewrite.pth'.format(self.pretrain_embed,loss_type))
+                #     torch.save(model.state_dict(),'/home/ec2-user/bert_rescorer_{}_{}_{}.pth'.format(self.pretrain_embed,loss_type,self.wise))
 
                 ## Save based on best accuracy
                 if average_val_accuracy > best_accuracy:
                     print('saving with accuracy of {}'.format(average_val_accuracy),
                           'improved over previous {}'.format(best_accuracy))
                     best_accuracy = average_val_accuracy
-                    torch.save(model.state_dict(), './checkpoints/bert_rescorer_{}_{}_listwise.pth'.format(self.pretrain_embed, loss_type))
+                    torch.save(model.state_dict(), './checkpoints/bert_rescorer_{}_{}_{}_1003.pth'.format(self.pretrain_embed, loss_type, self.wise))
 
         print()
         print('Best total val loss: {:.4f}'.format(best_loss))
@@ -454,7 +455,7 @@ class Pretrainer:
             model_path = '/home/ec2-user/transformer_rescorer_{}.pth'.format(self.pretrain_embed)
         elif rescorer_type == 'bert':
             model = BertRescorer(self.device, self.pretrain_embed, self.checkpoint_path, self.tokenizer.vocab_size, opt, pretrain_model=self.model, loss_type=loss_type)
-            model_path = './checkpoints/bert_rescorer_{}_{}_listwise.pth'.format(self.pretrain_embed, loss_type)
+            model_path = './checkpoints/bert_rescorer_{}_{}_{}_1003.pth'.format(self.pretrain_embed, loss_type, self.wise)
         model = model.to(self.device)
         model.load_state_dict(torch.load(model_path))
         print('Pretrained transformer/bert model has been loaded...')
@@ -506,7 +507,7 @@ class Pretrainer:
 
         print('Total utterances: ', len(scores))
 
-        with open(self.test_path+self.prefix+'_{}_{}_rescorer_{}_listwise.pkl'.format(self.pretrain_embed, rescorer_type, loss_type), 'wb') as f:
+        with open(self.test_path+self.prefix+'_{}_{}_rescorer_{}_{}_1003.pkl'.format(self.pretrain_embed, rescorer_type, loss_type, self.wise), 'wb') as f:
             pickle.dump(scores, f)
 
 

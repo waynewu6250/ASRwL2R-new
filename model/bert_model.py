@@ -38,7 +38,7 @@ class BertEmbedding(nn.Module):
         # model
         config = AutoConfig.from_pretrained('bert-base-uncased')
         config.output_hidden_states = True
-        self.bert_embedding = AutoModelForMaskedLM.from_pretrained('bert-base-uncased', config=config)
+        self.bert_embedding = AutoModelForMaskedLM.from_pretrained('./checkpoints/mlm-pretrained/', config=config)
 
         self.dropout = nn.Dropout(0.1)
 

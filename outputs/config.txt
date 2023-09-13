@@ -1,0 +1,8 @@
+# Lambdamart
+FEATURE_public = ["hyp_length", "decoder", "ctc"]
+
+# Lambdamart + BERT-CM
+FEATURE_public = ["hyp_length", "decoder", "ctc", "bce_score", "bce_mwer_score"]
+
+# Lambdamart + transformer_lm + BERT-CM
+FEATURE_public = ["hyp_length", "decoder", "ctc", "lm", "bce_score", "bce_mwer_score"]

@@ -27,10 +27,10 @@ class BertRescorer(nn.Module):
 
         self.audio_encoder = nn.Linear(768, self.bert_dim)
         self.fc_truth = nn.Linear(self.bert_dim, 1)
-        self.fc = nn.Linear(self.bert_dim+opt.feature_num_train, 1)
+        self.fc = nn.Linear(self.bert_dim, 1)
 
         # listwise setting
-        self.rnn = nn.LSTM(input_size=self.bert_dim+opt.feature_num_train,
+        self.rnn = nn.LSTM(input_size=self.bert_dim,
                            hidden_size=self.bert_dim,
                            batch_first=True,
                            bidirectional=True,
@@ -99,7 +99,8 @@ class BertRescorer(nn.Module):
         inputs = inputs.view(b, d, -1)
         (h_0, c_0) = audio_hidden, torch.zeros(*audio_hidden.shape).to(self.device)
 
-        packed = torch.nn.utils.rnn.pack_padded_sequence(inputs, lengths.cpu().numpy(), batch_first=True, enforce_sorted=False)
+        head = head.view(b, d, -1)
+        packed = torch.nn.utils.rnn.pack_padded_sequence(head, lengths.cpu().numpy(), batch_first=True, enforce_sorted=False)
         rnn_out, _ = self.rnn(packed)#, (h_0, c_0))
         seq_unpacked, lens_unpacked = torch.nn.utils.rnn.pad_packed_sequence(rnn_out, batch_first=True)
         rnn_out = self.dropout(seq_unpacked)

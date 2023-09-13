@@ -190,6 +190,8 @@ class Predictor:
 
         else:
             optim_func = self.optim_func_generator(pred_y)
+            # bound=np.asarray([[0.0, 10.0], [0.0, 10.0], [0.0, 10.0], [0.0, 20.0]])
+            # bound=np.asarray([[0.0, 10.0], [0.0, 10.0], [0.0, 10.0], [0.0, 10.0], [0.0, 10.0], [0.0, 20.0]])
             bound=np.asarray([[0.0, 10.0], [0.0, 10.0], [0.0, 10.0], [0.0, 10.0], [0.0, 10.0], [0.0, 10.0], [0.0, 20.0]])
             optim_result = scipy.optimize.dual_annealing(optim_func,
                                                          bound,

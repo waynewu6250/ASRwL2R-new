@@ -131,3 +131,6 @@ dmypy.json
 .DS_Store
 data/libri_subset
 checkpoints
+data/espnet_parsed/
+data/espnet/simpleoier_librispeech_asr_train_asr_conformer7_hubert_ll60k_large_raw_en_bpe5000_sp/decode_asr_lm_lm_train_lm_transformer2_en_bpe5000_valid.loss.ave_asr_model_valid.acc.ave/train_clean_100
+data/espnet_rerun_1003/

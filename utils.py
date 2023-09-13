@@ -114,6 +114,10 @@ def calculate_best_wer(qids, preds, reference, hypothesis, test_data, run_error=
         # 1best
         best1_id.append(a)
         rewrite_id.append(b-1)
+    hp = np.array(hypotheses_id)
+    b1 = np.array(best1_id)
+    print('length: ', len(hp[hp!=b1]))
+    # dd
 
     # Compare with raw truth (depreciated)
     # print('WER score from raw truth: %.5f' % wer(references, hypotheses))
